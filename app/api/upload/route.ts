@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
-import {v4} from 'uuid';
 
 export async function POST(req: Request) {
   try {
@@ -18,14 +17,18 @@ export async function POST(req: Request) {
 
     // Sanitize and prepare the filename
     // const filename = file.name.replace(/\s+/g, "_"); // Replace spaces with underscores
-    const filename = `${v4()}.pdf`;
+    const filename = `${file.name}.pdf`;
 
     // Define the upload path (Ensure the 'uploads' folder exists)
     const uploadDir = path.join(process.cwd(), "public", "uploads");
     const uploadPath = path.join(uploadDir, filename);
+    console.log("Helo")
+    console.log(buffer);
+
+  
     // Save the file to the local system
     await fs.writeFile(uploadPath, buffer);
-
+    
     return NextResponse.json({ message: "File uploaded successfully!" }, { status: 200 });
   } catch (error) {
     console.error("Error processing file upload:", error);
