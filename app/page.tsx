@@ -61,6 +61,7 @@ export default function Home() {
   //   });
   // };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pdfDoc,setPdfDoc]=useState<PDFDocumentProxy | null>(null);
 
   const handleFileChange=async(event: React.ChangeEvent<HTMLInputElement>)=>{
@@ -75,7 +76,7 @@ export default function Home() {
       setPdfDoc(loaded);
       renderPdf(loaded,1);
     }else{
-      alert("Enter valid pdf");
+      alert("upload valid pdf");
     }
   }
 
@@ -83,16 +84,20 @@ export default function Home() {
     const page = await pdfDoc.getPage(pageNumber);
     const viewport = page.getViewport({ scale: 1.5 }); // Adjust scale as needed
 
-    const canvas = document.getElementById("pdfCanvas");
+    const canvas = document.getElementById("pdfCanvas") as HTMLCanvasElement;
     const context = canvas.getContext("2d");
+    if(context){
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
     const renderContext = {
       canvasContext: context,
-      viewport: viewport,
+      viewport,
     };
     await page.render(renderContext).promise;
+  }else{
+    console.error("Falied to get canvas context");
+  }
   }
 
   return (
