@@ -7,7 +7,7 @@ Repository for PDF-Resolver
 
 🔍 **Navigate to the respective sections of the readme.**
 
-1. ℹ️  [About The Project](documentation/About.md)
+1. ℹ️  [About The Project](documentation/ABOUT.md)
 4. 🚀  [Installation](documentation/INSTALLATION.md)
 5. 🚂  [Usage](documentation/USAGE.md)
 6. 🏗️  [Project Structure](documentation/FOLDER_STRUCTURE.md)
