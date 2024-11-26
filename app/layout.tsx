@@ -1,3 +1,7 @@
+
+import { Provider } from "react-redux";
+import { store } from "./store/page"; 
+
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -28,8 +32,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Provider store={store}>
         {children}
-      </body>
+        </Provider>
+       </body>
     </html>
   );
 }
