@@ -4,10 +4,11 @@ import React, { useEffect, useRef, useState } from "react";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`;
 
-import { PDFDocumentProxy, TextContent } from "pdfjs-dist/types/src/display/api";
+import { PDFDocumentProxy} from "pdfjs-dist/types/src/display/api";
 import RectangleDrawer from "@/component/RectangleDrawer";
 import { usePdfDoc } from "@/app/context/PdfDocContext";
-import TextCanvas from "@/component/TextCanvas";
+import { useTextCanvas } from "./context/TextCanvasContext";
+
 
 export default function Home() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -16,7 +17,7 @@ export default function Home() {
   const [overlayCanvas, setOverlayCanvas] = useState<HTMLCanvasElement | null>(
     null
   );
-  const [textContent, setTextContent] = useState<null | TextContent>(null);
+  const { textContent,setTextContent } = useTextCanvas();
 
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -65,7 +66,9 @@ export default function Home() {
         await page.render(renderContext).promise;
 
         const fetchedTextContent = await page.getTextContent();
+        console.log(fetchedTextContent);
         setTextContent(fetchedTextContent);
+        console.log(textContent);
       }
     } else {
       console.error("Falied to get canvas context");
@@ -96,7 +99,6 @@ export default function Home() {
             ref={canvasRef}
             className="block border border-gray-300 shadow-lg"
           ></canvas>
-          {textContent && canvas && ( <TextCanvas textCanvas={textCanvasRef.current} textContent={textContent} />)}
           <canvas
             id="ZoopTextCanvas"
             ref={textCanvasRef}
