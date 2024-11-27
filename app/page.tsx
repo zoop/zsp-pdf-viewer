@@ -40,7 +40,7 @@ export default function Home() {
       const page = await pdfDoc.getPage(pageNumber);
       const viewport = page.getViewport({ scale: 1.5 }); 
 
-      const canvas = document.getElementById("pdfCanvas") as HTMLCanvasElement;
+      const canvas = canvasRef.current;
       const overlayCanvas = overlayCanvasRef.current;
 
       const context = canvas.getContext("2d");
@@ -73,7 +73,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center">
       <h1 className="text-2xl font-bold mb-4">PDF Viewer</h1>
-      <div className="flex-row ">
+      <div className="flex flex-col items-center ">
         <input
           type="file"
           id="pdfUpload"
@@ -81,17 +81,19 @@ export default function Home() {
           onChange={handleFileChange}
           className="mb-4 p-2 border border-gray-400 rounded"
         />
+        <div className="relative inline-block">
         <canvas
           id="pdfCanvas"
           ref={canvasRef}
-          className="border border-gray-300 shadow-lg"
+          className="block border border-gray-300 shadow-lg"
         ></canvas>
         {overlayCanvas && canvas && pdfDoc && <RectangleDrawer  canvas={overlayCanvas} />}
         <canvas
           id="overlayCanvas"
           ref={overlayCanvasRef}
-          className="absolute top-0 left-0"
+          className="absolute top-0 left-0 "
         ></canvas>
+        </div>
       </div>
     </div>
   );
