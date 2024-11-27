@@ -4,17 +4,25 @@ import React, { useEffect, useRef, useState } from "react";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`;
 
-import { PDFDocumentProxy } from "pdfjs-dist/types/src/display/api";
+import { PDFDocumentProxy} from "pdfjs-dist/types/src/display/api";
 import RectangleDrawer from "@/component/RectangleDrawer";
-import { usePdfDoc } from "@/app/context/PdfDocContext"; 
+import { usePdfDoc } from "@/app/context/PdfDocContext";
+import { useTextCanvas } from "./context/TextCanvasContext";
+
 
 export default function Home() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { pdfDoc, setPdfDoc } = usePdfDoc(); 
+  const { pdfDoc, setPdfDoc } = usePdfDoc();
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
-  const [overlayCanvas,setOverlayCanvas] = useState<HTMLCanvasElement | null>(null);
+  const [overlayCanvas, setOverlayCanvas] = useState<HTMLCanvasElement | null>(
+    null
+  );
+  const { textContent,setTextContent } = useTextCanvas();
+
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const overlayCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const textCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -36,35 +44,39 @@ export default function Home() {
   };
 
   const renderPdf = async (pdfDoc: PDFDocumentProxy, pageNumber: number) => {
-    if (canvasRef.current && overlayCanvasRef.current) {
+    if (canvasRef.current && overlayCanvasRef.current && textCanvasRef.current) {
       const page = await pdfDoc.getPage(pageNumber);
-      const viewport = page.getViewport({ scale: 1.5 }); 
+      const viewport = page.getViewport({ scale: 1.5 });
 
-      const canvas = document.getElementById("pdfCanvas") as HTMLCanvasElement;
-      const overlayCanvas = overlayCanvasRef.current;
-
-      const context = canvas.getContext("2d");
-      const overlayContext = overlayCanvas.getContext("2d");
+      const context = canvasRef.current.getContext("2d");
+      const overlayContext = overlayCanvasRef.current.getContext("2d");
 
       if (context && overlayContext) {
         canvasRef.current.height = viewport.height;
         canvasRef.current.width = viewport.width;
-        overlayCanvas.height = viewport.height;
-        overlayCanvas.width = viewport.width;
+        overlayCanvasRef.current.height = viewport.height;
+        overlayCanvasRef.current.width = viewport.width;
+        textCanvasRef.current.height = viewport.height;
+        textCanvasRef.current.width = viewport.width;
         // render pdf in canvas context
         const renderContext = {
           canvasContext: context,
           viewport,
         };
         await page.render(renderContext).promise;
-      } else {
-        console.error("Falied to get canvas context");
+
+        const fetchedTextContent = await page.getTextContent();
+        console.log(fetchedTextContent);
+        setTextContent(fetchedTextContent);
+        console.log(textContent);
       }
+    } else {
+      console.error("Falied to get canvas context");
     }
   };
 
   useEffect(() => {
-    if (canvasRef.current && overlayCanvasRef.current) {
+    if (canvasRef.current && textCanvasRef.current && overlayCanvasRef.current) {
       setCanvas(canvasRef.current);
       setOverlayCanvas(overlayCanvasRef.current);
     }
@@ -73,7 +85,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center">
       <h1 className="text-2xl font-bold mb-4">PDF Viewer</h1>
-      <div className="flex-row ">
+      <div className="flex flex-col items-center ">
         <input
           type="file"
           id="pdfUpload"
@@ -81,17 +93,24 @@ export default function Home() {
           onChange={handleFileChange}
           className="mb-4 p-2 border border-gray-400 rounded"
         />
-        <canvas
-          id="pdfCanvas"
-          ref={canvasRef}
-          className="border border-gray-300 shadow-lg"
-        ></canvas>
-        {overlayCanvas && canvas && pdfDoc && <RectangleDrawer  canvas={overlayCanvas} />}
-        <canvas
-          id="overlayCanvas"
-          ref={overlayCanvasRef}
-          className="absolute top-0 left-0"
-        ></canvas>
+        <div className="relative inline-block">
+          <canvas
+            id="ZoopPDFCanvas"
+            ref={canvasRef}
+            className="block border border-gray-300 shadow-lg"
+          ></canvas>
+          <canvas
+            id="ZoopTextCanvas"
+            ref={textCanvasRef}
+            className="absolute top-0 left-0"
+          />
+          {overlayCanvas && canvas && pdfDoc && (<RectangleDrawer canvas={overlayCanvas} />)}
+          <canvas
+            id="ZoopOverlayCanvas"
+            ref={overlayCanvasRef}
+            className="absolute top-0 left-0 "
+          ></canvas>
+        </div>
       </div>
     </div>
   );

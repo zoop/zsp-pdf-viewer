@@ -76,14 +76,7 @@ const RectangleDrawer: React.FC<RectangleDrawerProps> = ({ canvas }) => {
 
   return (
     <div>
-      <h2>Draw Rectangles</h2>
-      <ul>
-        {rectangles.map((rect, index) => (
-          <li key={index}>
-            Start: {JSON.stringify(rect.start)}, End: {JSON.stringify(rect.end)}
-          </li>
-        ))}
-      </ul>
+      
     </div>
   );
 };

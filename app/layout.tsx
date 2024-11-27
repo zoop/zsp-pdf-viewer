@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { PdfDocProvider } from "./context/PdfDocContext";
+import { TextCanvasProvider } from "./context/TextCanvasContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,6 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <PdfDocProvider>
+      <TextCanvasProvider>
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -33,6 +35,7 @@ export default function RootLayout({
         {children}
       </body>
     </html>
+    </TextCanvasProvider>
     </PdfDocProvider>
   );
 }
