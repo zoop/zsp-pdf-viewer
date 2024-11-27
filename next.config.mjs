@@ -7,6 +7,7 @@ const nextConfig = {
           canvas: false,
         };
       }
+      config.externals = [...config.externals, "canvas", "jsdom"];
       return config;
     },
   };;
