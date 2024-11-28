@@ -22,6 +22,19 @@ const RectangleDrawer: React.FC<RectangleDrawerProps> = ({ canvas }) => {
   const [rectangles, setRectangles] = useState<Rectangle[]>([]);
   const [startPoint, setStartPoint] = useState({ x: 0, y: 0 });
 
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" || event.key === "Esc") {
+        setRectangles([]); // Remove rectangles
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
 
   useEffect(() => {
     if (!canvas) return;
@@ -47,12 +60,12 @@ const RectangleDrawer: React.FC<RectangleDrawerProps> = ({ canvas }) => {
         rectangles.forEach(({ start, end }) => {
             context.strokeRect(start.x, start.y, end.x - start.x, end.y - start.y);
         });
-
-        context.fillStyle = "rgba(255, 0, 0, 0.5)";
-        context.fillRect(startPoint.x, startPoint.y, width, height); 
-        context.strokeStyle = "red";
-        context.lineWidth = 2;
-        context.strokeRect(startPoint.x, startPoint.y, width,height);
+            context.fillStyle = "rgba(255, 255, 0, 0.5)";
+            context.fillRect(startPoint.x, startPoint.y, width, height);
+            context.strokeStyle = "yellow";
+            context.lineWidth = 2;
+            context.strokeRect(startPoint.x, startPoint.y, width, height);
+          
       };
 
     const handleMouseUp = (event: MouseEvent) => {
@@ -60,7 +73,7 @@ const RectangleDrawer: React.FC<RectangleDrawerProps> = ({ canvas }) => {
         setIsDrawing(false);
         const rect = canvas.getBoundingClientRect();
         const endPoint = { x: event.clientX - rect.left, y: event.clientY - rect.top };
-        setRectangles((prev) => [...prev, { start: startPoint, end: endPoint }]);
+            setRectangles((prev) => [...prev, { start: startPoint, end: endPoint }]);
     };
 
     canvas.addEventListener("mousedown", handleMouseDown);
@@ -75,9 +88,7 @@ const RectangleDrawer: React.FC<RectangleDrawerProps> = ({ canvas }) => {
   }, [canvas, isDrawing, startPoint]);
 
   return (
-    <div>
-      
-    </div>
+    <div />
   );
 };
 
