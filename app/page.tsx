@@ -8,6 +8,7 @@ import { PDFDocumentProxy } from "pdfjs-dist/types/src/display/api";
 import RectangleDrawer from "@/component/RectangleDrawer";
 import { usePdfDoc } from "@/app/context/PdfDocContext";
 import { useTextCanvas } from "./context/TextCanvasContext";
+//import AnnotationCanvas from "@/component/AnnotationCanvas";
 
 
 export default function Home() {
@@ -17,16 +18,25 @@ export default function Home() {
   const [overlayCanvas, setOverlayCanvas] = useState<HTMLCanvasElement | null>(
     null
   );
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [annotationCanvas, setAnnotationCanvas]=useState<HTMLCanvasElement | null>(null);
   
   const { setTextContent } = useTextCanvas();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const overlayCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const textCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  //const annotationCanvasRef=useRef<HTMLCanvasElement | null>(null);
   // const textBoundsRef = useRef<
   //   Array<{ x: number; y: number; width: number; height: number }>
   // >([]);
 
+  // useEffect(()=>{
+  //   if(annotationCanvasRef.current){
+  //     setAnnotationCanvas(annotationCanvasRef.current);
+  //   }
+  // },[]);
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -64,23 +74,26 @@ export default function Home() {
 
 
   const renderPdf = async (pdfDoc: PDFDocumentProxy, pageNumber: number) => {
-    const page = await pdfDoc.getPage(pageNumber);
+      const page = await pdfDoc.getPage(pageNumber);
       const viewport = page.getViewport({ scale: 1.5 });
     if (
       canvasRef.current &&
-      overlayCanvasRef.current &&
-      textCanvasRef.current
+       overlayCanvasRef.current &&
+      textCanvasRef.current 
     ) {
       
 
       const context = canvasRef.current.getContext("2d");
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const overlayContext = overlayCanvasRef.current.getContext("2d");
 
-      if (context && overlayContext) {
+      if (context) {
         canvasRef.current.height = viewport.height;
         canvasRef.current.width = viewport.width;
         textCanvasRef.current.height = viewport.height;
         textCanvasRef.current.width = viewport.width;
+        // annotationCanvasRef.current.height = viewport.height;
+        // annotationCanvasRef.current.width = viewport.width;
         overlayCanvasRef.current.height = viewport.height;
         overlayCanvasRef.current.width = viewport.width;
 
@@ -169,25 +182,35 @@ export default function Home() {
         />
         <div className="relative inline-block">
           <canvas
-            id="ZoopPDFCanvas"
+            id="zsp_PDFCanvas_layer"
             ref={canvasRef}
             className="block border border-gray-300 shadow-lg"
           ></canvas>
           <canvas
-            id="ZoopTextCanvas"
+            id="zsp_TextCanvas_layer"
             ref={textCanvasRef}
             className="absolute top-0 left-0"
           />
-          {overlayCanvas && canvas && pdfDoc && (
-            <RectangleDrawer
-              canvas={overlayCanvas}
-            />
-          )}
           <canvas
-            id="ZoopOverlayCanvas"
+            id="zsp_OverlayCanvas_layer"
             ref={overlayCanvasRef}
             className="absolute top-0 left-0 "
-          ></canvas>
+          ></canvas> 
+          {overlayCanvas && canvas && pdfDoc && (
+            <RectangleDrawer
+            canvas={overlayCanvas} />
+          )}
+          
+          {/* 
+          <canvas
+          id="zsp_annotation_layer"
+          ref={annotationCanvasRef}
+          className="absolute top-0 left-0"
+          >
+          </canvas>
+          <><<AnnotationCanvas
+                canvas={annotationCanvas} />>*/}
+          
         </div>
       </div>
     </div>
