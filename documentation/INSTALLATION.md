@@ -23,8 +23,8 @@ Before you start, make sure you have the following installed and configured on y
 ## 📝 Steps
 
 - [Installation](#installation)
-  - [Prerequisites](#prerequisites)
-  -[Running this repo](#running-this-repo)
+[Prerequisites](#prerequisites)
+[Running this repo](#running-this-repo)
 
 ### Running this repo
 
