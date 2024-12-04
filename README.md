@@ -1,6 +1,6 @@
-# Repo Name
+# ZSP-PDF-VIEWER
 
-Repository for PDF-Resolver
+Repository for ZSP-PDF-VIEWER
 
 <!-- PROJECT LOGO -->
 <br />
