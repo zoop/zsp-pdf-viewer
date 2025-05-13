@@ -1,0 +1,25 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+
+metadata:
+  name: zsp-pdf-viewer
+  description: "ZSP Admin is a POC application built with Next.js that enables text extraction and interactive annotation of PDF documents. "
+  labels:
+    tier: frontend
+    language: Node.js
+    criticality: high
+  tags:
+    - zoopsign
+    - authentication
+    - pdf-viewer
+    - annotations
+  annotations:
+    github.com/project-slug: zoop/zsp-pdf-viewer
+    backstage.io/techdocs-ref: dir:.
+    jira.com/project-key: ZK
+    sonarqube.org/project-key: zsp-pdf-viewer
+spec:
+  type: Experimental
+  lifecycle: Experimental
+  owner: group:zoopsign-backend-core
+  system: Zoopsign

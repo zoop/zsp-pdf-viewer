@@ -1,0 +1,54 @@
+name: TechDocs Build and Publish
+on:
+  push:
+    branches:
+      - main # Run on main branch updates
+      - develop # testing
+    paths:
+      - "docs/**" # Run when documentation changes
+      - "mkdocs.yml" # Run when MkDocs config changes
+      - "catalog-info.yaml" # Run when catalog info changes
+      - ".github/workflows/techdocs.yaml" # Run when this workflow changes
+  # Allow manual trigger
+  workflow_dispatch:
+jobs:
+  build-and-publish-techdocs:
+    name: Build and Publish TechDocs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: Install TechDocs CLI and required tools
+        run: |
+          # Install techdocs-cli directly with npm
+          npm install -g @techdocs/cli
+          # Install Python dependencies
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install mkdocs-techdocs-core
+      - name: Configure Google Cloud credentials
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.TECHDOCS_GCS_CREDENTIALS }}
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Generate TechDocs documentation
+        run: |
+          # Extract entity information from catalog-info.yaml
+          if [ -f "catalog-info.yaml" ]; then
+            NAMESPACE=$(python3 -c "import yaml; print(yaml.safe_load(open('catalog-info.yaml'))['metadata'].get('namespace', 'default'))")
+            KIND=$(python3 -c "import yaml; print(yaml.safe_load(open('catalog-info.yaml'))['kind'].lower())")
+            NAME=$(python3 -c "import yaml; print(yaml.safe_load(open('catalog-info.yaml'))['metadata']['name'])")
+            echo "Entity: $NAMESPACE/$KIND/$NAME"
+            # Generate and publish techdocs
+            techdocs-cli generate --no-docker
+            techdocs-cli publish --publisher-type googleGcs \
+              --storage-name zoop-tech-docs \
+              --entity $NAMESPACE/$KIND/$NAME
+          else
+            echo "No catalog-info.yaml found in the repository root"
+            exit 1
