@@ -1,0 +1,19 @@
+name: TechDocs Build and Publish
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "openapi.yaml"
+      - "catalog-info.yaml"
+      - ".github/workflows/techdocs.yml"
+  workflow_dispatch:
+
+jobs:
+  call-reusable-techdocs:
+    uses: zoop/.github/.github/workflows/techdocs-reusable.yml@main
+    secrets:
+      TECHDOCS_GCS_CREDENTIALS: ${{ secrets.TECHDOCS_GCS_CREDENTIALS }}
